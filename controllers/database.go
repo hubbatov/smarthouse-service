@@ -1,10 +1,10 @@
-package utils
+package controllers
 
 import (
 	"fmt"
 
+	"anybodyhere/errors"
 	"anybodyhere/models"
-
 	"anybodyhere/restapi"
 
 	"github.com/jinzhu/gorm"
@@ -24,23 +24,26 @@ const (
 	DbName = "anybodyhere"
 )
 
+//DBManager is a standalone DatabaseManager object
+var DBManager DatabaseManager
+
 //DatabaseManager (holds database connection)
 type DatabaseManager struct {
 	dataBase *gorm.DB
 }
 
-func (d *DatabaseManager) createDb() {
+// CreateDb creates new DatabaseManager
+func CreateDb() {
 	dbinfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 		DbHost, DbPort, DbUser, DbPassword, DbName)
 	db, err := gorm.Open("postgres", dbinfo)
-	handleError(ConvertCustomError(err))
+
+	errors.HandleError(errors.ConvertCustomError(err))
 
 	db.AutoMigrate(&models.User{})
 
-	d.dataBase = db
+	DBManager.dataBase = db
 }
-
-//Users
 
 func (d *DatabaseManager) users() []models.User {
 	var table []models.User
@@ -48,7 +51,7 @@ func (d *DatabaseManager) users() []models.User {
 	return table
 }
 
-func (d *DatabaseManager) createUser(userdata restapi.RESTUser) {
+func (d *DatabaseManager) createUser(userdata restapi.RESTUser) []error {
 	u := models.CreateUser(userdata)
-	d.dataBase.Create(&u)
+	return d.dataBase.Create(&u).GetErrors()
 }

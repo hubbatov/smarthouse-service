@@ -7,8 +7,9 @@ import (
 
 //User (typical user of service)
 type User struct {
-	ID    uint      `gorm:"primary_key" json:"-"`
-	Since time.Time `json:"since"`
+	ID             uint      `gorm:"primary_key" json:"-"`
+	Since          time.Time `json:"since"`
+	HashedPassword []byte    `json:"-"`
 	restapi.RESTUser
 }
 
@@ -16,8 +17,8 @@ type User struct {
 func CreateUser(userdata restapi.RESTUser) User {
 	a := User{}
 	a.Name = userdata.Name
-	a.Login = userdata.Name
-	a.Password = userdata.Name
+	a.Login = userdata.Login
+	a.Password = userdata.Password
 	a.Since = time.Now()
 	return a
 }
