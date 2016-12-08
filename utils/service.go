@@ -25,7 +25,7 @@ func (s *Service) Run() {
 	router.HandleFunc("/users", s.usersController.GetUsers).Methods("GET")
 	router.HandleFunc("/users", s.usersController.RegisterUser).Methods("POST")
 
-	router.HandleFunc("/users/login", s.usersController.Login).Methods("POST")
+	router.HandleFunc("/login", s.usersController.Login).Methods("POST")
 
 	http.ListenAndServe(":12345", router)
 }

@@ -46,6 +46,9 @@ func (c *UsersController) RegisterUser(w http.ResponseWriter, req *http.Request)
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprintf(w, "%s", eArray)
 	} else {
+		user := getUser(userdata.Login)
+		updatePasswordHash(&user)
+
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprintf(w, "%s", "Registered")
 	}
@@ -73,9 +76,6 @@ func (c *UsersController) Login(w http.ResponseWriter, req *http.Request) {
 		w.WriteHeader(http.StatusUnauthorized)
 		fmt.Fprintf(w, "%s", "User not found")
 	} else {
-
-		updatePasswordHash(&user)
-
 		err = bcrypt.CompareHashAndPassword(user.HashedPassword, []byte(userdata.Password))
 		errors.HandleError(errors.ConvertCustomError(err))
 
