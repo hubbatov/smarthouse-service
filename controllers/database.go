@@ -43,13 +43,14 @@ func CreateDb() {
 	db.AutoMigrate(&models.User{})
 	db.AutoMigrate(&models.House{})
 	db.AutoMigrate(&models.Sensor{})
+	db.AutoMigrate(&models.SensorData{})
 
 	DBManager.dataBase = db
 }
 
 func (d *DatabaseManager) users() []models.User {
 	var table []models.User
-	d.dataBase.Order("id").Limit(10).Find(&table)
+	d.dataBase.Order("id").Find(&table)
 	return table
 }
 
@@ -60,7 +61,7 @@ func (d *DatabaseManager) createUser(userdata restapi.RESTUser) []error {
 
 func (d *DatabaseManager) houses(userID int) []models.House {
 	var table []models.House
-	d.dataBase.Where("user_id = ?", userID).Order("id").Limit(10).Find(&table)
+	d.dataBase.Where("user_id = ?", userID).Order("id").Find(&table)
 	return table
 }
 
@@ -84,7 +85,7 @@ func (d *DatabaseManager) removeHouse(houseID int) []error {
 
 func (d *DatabaseManager) sensors(houseID int) []models.Sensor {
 	var table []models.Sensor
-	d.dataBase.Where("house_id = ?", houseID).Order("id").Limit(10).Find(&table)
+	d.dataBase.Where("house_id = ?", houseID).Order("id").Find(&table)
 	return table
 }
 

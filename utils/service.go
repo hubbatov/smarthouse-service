@@ -36,5 +36,7 @@ func (s *Service) Run() {
 	router.HandleFunc("/users/{user_id}/houses/{house_id}/sensors/{sensor_id}", controllers.EditSensor).Methods("PUT")
 	router.HandleFunc("/users/{user_id}/houses/{house_id}/sensors/{sensor_id}", controllers.RemoveSensor).Methods("DELETE")
 
+	router.HandleFunc("/users/{user_id}/houses/{house_id}/sensors/{sensor_id}", controllers.RemoveSensor).Methods("DELETE")
+
 	http.ListenAndServe(":12345", router)
 }
