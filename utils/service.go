@@ -26,10 +26,15 @@ func (s *Service) Run() {
 
 	router.HandleFunc("/login", controllers.Login).Methods("POST")
 
-	router.HandleFunc("/houses", controllers.GetHouses).Methods("GET")
-	router.HandleFunc("/houses", controllers.AddHouse).Methods("POST")
-	router.HandleFunc("/houses/{id}", controllers.EditHouse).Methods("PUT")
-	router.HandleFunc("/houses/{id}", controllers.RemoveHouse).Methods("DELETE")
+	router.HandleFunc("/users/{user_id}/houses", controllers.GetHouses).Methods("GET")
+	router.HandleFunc("/users/{user_id}/houses", controllers.AddHouse).Methods("POST")
+	router.HandleFunc("/users/{user_id}/houses/{house_id}", controllers.EditHouse).Methods("PUT")
+	router.HandleFunc("/users/{user_id}/houses/{house_id}", controllers.RemoveHouse).Methods("DELETE")
+
+	router.HandleFunc("/users/{user_id}/houses/{house_id}/sensors", controllers.GetSensors).Methods("GET")
+	router.HandleFunc("/users/{user_id}/houses/{house_id}/sensors", controllers.AddSensor).Methods("POST")
+	router.HandleFunc("/users/{user_id}/houses/{house_id}/sensors/{sensor_id}", controllers.EditSensor).Methods("PUT")
+	router.HandleFunc("/users/{user_id}/houses/{house_id}/sensors/{sensor_id}", controllers.RemoveSensor).Methods("DELETE")
 
 	http.ListenAndServe(":12345", router)
 }

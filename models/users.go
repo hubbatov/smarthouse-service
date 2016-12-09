@@ -7,11 +7,11 @@ import (
 
 //User represents typical user of service
 type User struct {
-	ID             int       `gorm:"primary_key" json:"-"`
+	ID             int       `gorm:"primary_key" json:"id"`
 	Since          time.Time `json:"since"`
 	HashedPassword []byte    `json:"-"`
 	restapi.RESTUser
-	Houses []House
+	Houses []House `json:"-"`
 }
 
 //CreateUser creates new user

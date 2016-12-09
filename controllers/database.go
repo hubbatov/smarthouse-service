@@ -42,6 +42,7 @@ func CreateDb() {
 
 	db.AutoMigrate(&models.User{})
 	db.AutoMigrate(&models.House{})
+	db.AutoMigrate(&models.Sensor{})
 
 	DBManager.dataBase = db
 }
@@ -79,4 +80,24 @@ func (d *DatabaseManager) editHouse(houseID int, housedata restapi.RESTHouse) []
 
 func (d *DatabaseManager) removeHouse(houseID int) []error {
 	return d.dataBase.Where("id = ?", houseID).Delete(&models.House{}).GetErrors()
+}
+
+func (d *DatabaseManager) sensors(houseID int) []models.Sensor {
+	var table []models.Sensor
+	d.dataBase.Where("house_id = ?", houseID).Order("id").Limit(10).Find(&table)
+	return table
+}
+
+func (d *DatabaseManager) addSensor(sensordata restapi.RESTSensor) []error {
+	h := models.CreateSensor(sensordata)
+	return d.dataBase.Create(&h).GetErrors()
+}
+
+func (d *DatabaseManager) editSensor(sensorID int, sensordata restapi.RESTSensor) []error {
+	errors := d.dataBase.Model(&models.Sensor{}).Where("id = ?", sensorID).Update("name", sensordata.Name).GetErrors()
+	return errors
+}
+
+func (d *DatabaseManager) removeSensor(sensorID int) []error {
+	return d.dataBase.Where("id = ?", sensorID).Delete(&models.Sensor{}).GetErrors()
 }

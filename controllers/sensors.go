@@ -13,23 +13,26 @@ import (
 	"fmt"
 )
 
-//GetHouses returns json with all houses of user represented by Authorization
-func GetHouses(w http.ResponseWriter, req *http.Request) {
+//GetSensors returns json with all sensors in house
+func GetSensors(w http.ResponseWriter, req *http.Request) {
 	accessToken := req.Header.Get("Authorization")
 
 	fl, userID := CheckAuthorization(accessToken)
 
 	if fl && GetIntVar("user_id", req) == userID {
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(DBManager.houses(userID))
+
+		houseID := GetIntVar("house_id", req)
+
+		json.NewEncoder(w).Encode(DBManager.sensors(houseID))
 	} else {
 		w.WriteHeader(http.StatusUnauthorized)
 		fmt.Fprintf(w, "%s", "Please, login or register")
 	}
 }
 
-//AddHouse creates new house in system
-func AddHouse(w http.ResponseWriter, req *http.Request) {
+//AddSensor creates new sensor in house
+func AddSensor(w http.ResponseWriter, req *http.Request) {
 	contentType := req.Header.Get("Content-Type")
 
 	if !strings.Contains(contentType, "application/json") {
@@ -39,23 +42,26 @@ func AddHouse(w http.ResponseWriter, req *http.Request) {
 	body, err := ioutil.ReadAll(req.Body)
 	errors.HandleError(errors.ConvertCustomError(err))
 
-	var housedata restapi.RESTHouse
-	err = json.Unmarshal(body, &housedata)
+	var sensordata restapi.RESTSensor
+	err = json.Unmarshal(body, &sensordata)
 	errors.HandleError(errors.ConvertCustomError(err))
 
 	accessToken := req.Header.Get("Authorization")
 	fl, userID := CheckAuthorization(accessToken)
 
 	if fl && GetIntVar("user_id", req) == userID {
-		housedata.UserID = userID
-		eArray := DBManager.addHouse(housedata)
+
+		houseID := GetIntVar("house_id", req)
+
+		sensordata.HouseID = houseID
+		eArray := DBManager.addSensor(sensordata)
 
 		if len(eArray) > 0 {
 			w.WriteHeader(http.StatusBadRequest)
 			fmt.Fprintf(w, "%s", eArray)
 		} else {
 			w.WriteHeader(http.StatusOK)
-			fmt.Fprintf(w, "%s", "Created house")
+			fmt.Fprintf(w, "%s", "Created sensor")
 		}
 	} else {
 		w.WriteHeader(http.StatusUnauthorized)
@@ -63,8 +69,8 @@ func AddHouse(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-//EditHouse edit existing house in system
-func EditHouse(w http.ResponseWriter, req *http.Request) {
+//EditSensor edit existing sensor in house
+func EditSensor(w http.ResponseWriter, req *http.Request) {
 	contentType := req.Header.Get("Content-Type")
 	if !strings.Contains(contentType, "application/json") {
 		errors.HandleError(errors.GenerateCustomError("Content-Type is not application/json"))
@@ -78,20 +84,20 @@ func EditHouse(w http.ResponseWriter, req *http.Request) {
 		body, err := ioutil.ReadAll(req.Body)
 		errors.HandleError(errors.ConvertCustomError(err))
 
-		var housedata restapi.RESTHouse
-		err = json.Unmarshal(body, &housedata)
+		var sensordata restapi.RESTSensor
+		err = json.Unmarshal(body, &sensordata)
 		errors.HandleError(errors.ConvertCustomError(err))
 
-		houseID := GetIntVar("house_id", req)
+		sensorID := GetIntVar("sensor_id", req)
 
-		eArray := DBManager.editHouse(houseID, housedata)
+		eArray := DBManager.editSensor(sensorID, sensordata)
 
 		if len(eArray) > 0 {
 			w.WriteHeader(http.StatusBadRequest)
 			fmt.Fprintf(w, "%s", eArray)
 		} else {
 			w.WriteHeader(http.StatusOK)
-			fmt.Fprintf(w, "%s %d", "Edited house", houseID)
+			fmt.Fprintf(w, "%s %d", "Edited sensor", sensorID)
 		}
 
 	} else {
@@ -100,23 +106,23 @@ func EditHouse(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-//RemoveHouse removes house from system
-func RemoveHouse(w http.ResponseWriter, req *http.Request) {
+//RemoveSensor removes sensor from house
+func RemoveSensor(w http.ResponseWriter, req *http.Request) {
 	accessToken := req.Header.Get("Authorization")
 	fl, userID := CheckAuthorization(accessToken)
 
 	if fl && GetIntVar("user_id", req) == userID {
 
-		houseID := GetIntVar("house_id", req)
+		sensorID := GetIntVar("sensor_id", req)
 
-		eArray := DBManager.removeHouse(houseID)
+		eArray := DBManager.removeSensor(sensorID)
 
 		if len(eArray) > 0 {
 			w.WriteHeader(http.StatusBadRequest)
 			fmt.Fprintf(w, "%s", eArray)
 		} else {
 			w.WriteHeader(http.StatusOK)
-			fmt.Fprintf(w, "%s %d", "Removed house", houseID)
+			fmt.Fprintf(w, "%s %d", "Removed sensor", sensorID)
 		}
 
 	} else {

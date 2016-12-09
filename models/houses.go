@@ -2,9 +2,9 @@ package models
 
 import "anybodyhere/restapi"
 
-//House represents house with rooms
+//House represents house with sensors
 type House struct {
-	ID int `gorm:"primary_key" json:"-"`
+	ID int `gorm:"primary_key" json:"id"`
 	restapi.RESTHouse
 }
 
