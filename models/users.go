@@ -5,15 +5,16 @@ import (
 	"time"
 )
 
-//User (typical user of service)
+//User represents typical user of service
 type User struct {
-	ID             uint      `gorm:"primary_key" json:"-"`
+	ID             int       `gorm:"primary_key" json:"-"`
 	Since          time.Time `json:"since"`
 	HashedPassword []byte    `json:"-"`
 	restapi.RESTUser
+	Houses []House
 }
 
-//CreateUser (creating new user)
+//CreateUser creates new user
 func CreateUser(userdata restapi.RESTUser) User {
 	a := User{}
 	a.Name = userdata.Name

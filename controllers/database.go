@@ -41,6 +41,7 @@ func CreateDb() {
 	errors.HandleError(errors.ConvertCustomError(err))
 
 	db.AutoMigrate(&models.User{})
+	db.AutoMigrate(&models.House{})
 
 	DBManager.dataBase = db
 }
@@ -54,4 +55,28 @@ func (d *DatabaseManager) users() []models.User {
 func (d *DatabaseManager) createUser(userdata restapi.RESTUser) []error {
 	u := models.CreateUser(userdata)
 	return d.dataBase.Create(&u).GetErrors()
+}
+
+func (d *DatabaseManager) houses(userID int) []models.House {
+	var table []models.House
+	d.dataBase.Where("user_id = ?", userID).Order("id").Limit(10).Find(&table)
+	return table
+}
+
+func (d *DatabaseManager) addHouse(housedata restapi.RESTHouse) []error {
+	h := models.CreateHouse(housedata)
+	return d.dataBase.Create(&h).GetErrors()
+}
+
+func (d *DatabaseManager) editHouse(houseID int, housedata restapi.RESTHouse) []error {
+	errors := d.dataBase.Model(&models.House{}).Where("id = ?", houseID).Update("name", housedata.Name).GetErrors()
+	if len(errors) > 0 {
+		return errors
+	}
+	errors = d.dataBase.Model(&models.House{}).Where("id = ?", houseID).Update("address", housedata.Address).GetErrors()
+	return errors
+}
+
+func (d *DatabaseManager) removeHouse(houseID int) []error {
+	return d.dataBase.Where("id = ?", houseID).Delete(&models.House{}).GetErrors()
 }

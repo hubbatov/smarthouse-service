@@ -11,7 +11,6 @@ import (
 
 // Service for data access
 type Service struct {
-	usersController controllers.UsersController
 }
 
 //Run service
@@ -22,10 +21,15 @@ func (s *Service) Run() {
 
 	router := mux.NewRouter()
 
-	router.HandleFunc("/users", s.usersController.GetUsers).Methods("GET")
-	router.HandleFunc("/users", s.usersController.RegisterUser).Methods("POST")
+	router.HandleFunc("/users", controllers.GetUsers).Methods("GET")
+	router.HandleFunc("/users", controllers.RegisterUser).Methods("POST")
 
-	router.HandleFunc("/login", s.usersController.Login).Methods("POST")
+	router.HandleFunc("/login", controllers.Login).Methods("POST")
+
+	router.HandleFunc("/houses", controllers.GetHouses).Methods("GET")
+	router.HandleFunc("/houses", controllers.AddHouse).Methods("POST")
+	router.HandleFunc("/houses/{id}", controllers.EditHouse).Methods("PUT")
+	router.HandleFunc("/houses/{id}", controllers.RemoveHouse).Methods("DELETE")
 
 	http.ListenAndServe(":12345", router)
 }
