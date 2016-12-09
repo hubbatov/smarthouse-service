@@ -130,3 +130,59 @@ func RemoveSensor(w http.ResponseWriter, req *http.Request) {
 		fmt.Fprintf(w, "%s", "Please, login or register")
 	}
 }
+
+//GetSensorData returns json with all sensor data
+func GetSensorData(w http.ResponseWriter, req *http.Request) {
+	accessToken := req.Header.Get("Authorization")
+
+	fl, userID := CheckAuthorization(accessToken)
+
+	if fl && GetIntVar("user_id", req) == userID {
+		w.WriteHeader(http.StatusOK)
+
+		sensorID := GetIntVar("sensor_id", req)
+
+		json.NewEncoder(w).Encode(DBManager.sensordata(sensorID))
+	} else {
+		w.WriteHeader(http.StatusUnauthorized)
+		fmt.Fprintf(w, "%s", "Please, login or register")
+	}
+}
+
+//AddSensorData adds sensor data
+func AddSensorData(w http.ResponseWriter, req *http.Request) {
+	contentType := req.Header.Get("Content-Type")
+	if !strings.Contains(contentType, "application/json") {
+		errors.HandleError(errors.GenerateCustomError("Content-Type is not application/json"))
+	}
+
+	accessToken := req.Header.Get("Authorization")
+	fl, userID := CheckAuthorization(accessToken)
+
+	if fl && GetIntVar("user_id", req) == userID {
+
+		body, err := ioutil.ReadAll(req.Body)
+		errors.HandleError(errors.ConvertCustomError(err))
+
+		var sensordata restapi.RESTSensorData
+		err = json.Unmarshal(body, &sensordata)
+		errors.HandleError(errors.ConvertCustomError(err))
+
+		sensorID := GetIntVar("sensor_id", req)
+		sensordata.SensorID = sensorID
+
+		eArray := DBManager.addSensorData(sensordata)
+
+		if len(eArray) > 0 {
+			w.WriteHeader(http.StatusBadRequest)
+			fmt.Fprintf(w, "%s", eArray)
+		} else {
+			w.WriteHeader(http.StatusOK)
+			fmt.Fprintf(w, "%s %d", "Added sensor data to sensor", sensorID)
+		}
+
+	} else {
+		w.WriteHeader(http.StatusUnauthorized)
+		fmt.Fprintf(w, "%s", "Please, login or register")
+	}
+}

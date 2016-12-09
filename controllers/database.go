@@ -75,8 +75,7 @@ func (d *DatabaseManager) editHouse(houseID int, housedata restapi.RESTHouse) []
 	if len(errors) > 0 {
 		return errors
 	}
-	errors = d.dataBase.Model(&models.House{}).Where("id = ?", houseID).Update("address", housedata.Address).GetErrors()
-	return errors
+	return d.dataBase.Model(&models.House{}).Where("id = ?", houseID).Update("address", housedata.Address).GetErrors()
 }
 
 func (d *DatabaseManager) removeHouse(houseID int) []error {
@@ -95,10 +94,20 @@ func (d *DatabaseManager) addSensor(sensordata restapi.RESTSensor) []error {
 }
 
 func (d *DatabaseManager) editSensor(sensorID int, sensordata restapi.RESTSensor) []error {
-	errors := d.dataBase.Model(&models.Sensor{}).Where("id = ?", sensorID).Update("name", sensordata.Name).GetErrors()
-	return errors
+	return d.dataBase.Model(&models.Sensor{}).Where("id = ?", sensorID).Update("name", sensordata.Name).GetErrors()
 }
 
 func (d *DatabaseManager) removeSensor(sensorID int) []error {
 	return d.dataBase.Where("id = ?", sensorID).Delete(&models.Sensor{}).GetErrors()
+}
+
+func (d *DatabaseManager) sensordata(sensorID int) []models.SensorData {
+	var table []models.SensorData
+	d.dataBase.Where("sensor_id = ?", sensorID).Order("time").Find(&table)
+	return table
+}
+
+func (d *DatabaseManager) addSensorData(sensordata restapi.RESTSensorData) []error {
+	sd := models.CreateSensorData(sensordata)
+	return d.dataBase.Create(&sd).GetErrors()
 }
