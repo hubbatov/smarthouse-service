@@ -54,6 +54,12 @@ func (d *DatabaseManager) users() []models.User {
 	return table
 }
 
+func (d *DatabaseManager) user(userLogin, userPassword string) []models.User {
+	var table []models.User
+	d.dataBase.Order("id").Find(&table)
+	return table
+}
+
 func (d *DatabaseManager) createUser(userdata restapi.RESTUser) []error {
 	u := models.CreateUser(userdata)
 	return d.dataBase.Create(&u).GetErrors()
