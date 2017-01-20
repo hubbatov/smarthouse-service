@@ -28,6 +28,21 @@ func GetUsers(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
+//GetUser returns json with authorized user data
+func GetUser(w http.ResponseWriter, req *http.Request) {
+	accessToken := req.Header.Get("Authorization")
+
+	fl, userID := CheckAuthorization(accessToken)
+
+	if fl {
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(GetUserByID(userID))
+	} else {
+		w.WriteHeader(http.StatusUnauthorized)
+		fmt.Fprintf(w, "%s", "Please, login or register")
+	}
+}
+
 //RegisterUser creates new user in system
 func RegisterUser(w http.ResponseWriter, req *http.Request) {
 	contentType := req.Header.Get("Content-Type")

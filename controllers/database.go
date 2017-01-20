@@ -21,7 +21,7 @@ const (
 	//DbPassword - database password
 	DbPassword = "123456"
 	//DbName - database db name
-	DbName = "anybodyhere"
+	DbName = "smarthouse"
 )
 
 //DBManager is a standalone DatabaseManager object

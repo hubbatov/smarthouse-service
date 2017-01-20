@@ -21,6 +21,7 @@ func (s *Service) Run() {
 
 	router := mux.NewRouter()
 
+	router.HandleFunc("/user", controllers.GetUser).Methods("GET")
 	router.HandleFunc("/users", controllers.GetUsers).Methods("GET")
 	router.HandleFunc("/users", controllers.RegisterUser).Methods("POST")
 

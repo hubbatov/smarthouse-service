@@ -69,6 +69,12 @@ func getUserData(authdata string) (user, password string) {
 	return "", ""
 }
 
+//GetUserByID returns user with id = userId
+func GetUserByID(userID int) (user models.User) {
+	DBManager.dataBase.Where("id = ?", userID).First(&user)
+	return
+}
+
 //CheckAuthorization validates hash in Authorization header
 func CheckAuthorization(authdata string) (bool, int) {
 	data := authdata
