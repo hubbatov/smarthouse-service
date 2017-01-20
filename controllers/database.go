@@ -3,9 +3,9 @@ package controllers
 import (
 	"fmt"
 
-	"anybodyhere/errors"
-	"anybodyhere/models"
-	"anybodyhere/restapi"
+	"smarthouse-service/errors"
+	"smarthouse-service/models"
+	"smarthouse-service/restapi"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres" //pg adapter

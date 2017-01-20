@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"anybodyhere/controllers"
+	"smarthouse-service/controllers"
 
 	"github.com/gorilla/mux"
 )

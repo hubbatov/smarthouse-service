@@ -5,8 +5,8 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"anybodyhere/errors"
-	"anybodyhere/restapi"
+	"smarthouse-service/errors"
+	"smarthouse-service/restapi"
 
 	"strings"
 

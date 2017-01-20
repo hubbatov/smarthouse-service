@@ -1,6 +1,6 @@
 package models
 
-import "anybodyhere/restapi"
+import "smarthouse-service/restapi"
 
 //House represents house with sensors
 type House struct {

@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"anybodyhere/errors"
+	"smarthouse-service/errors"
 
 	"github.com/gorilla/mux"
 )

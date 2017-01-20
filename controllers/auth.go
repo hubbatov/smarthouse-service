@@ -7,9 +7,9 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	"anybodyhere/errors"
-	"anybodyhere/models"
-	"anybodyhere/restapi"
+	"smarthouse-service/errors"
+	"smarthouse-service/models"
+	"smarthouse-service/restapi"
 
 	"strings"
 

@@ -1,7 +1,7 @@
 package models
 
 import (
-	"anybodyhere/restapi"
+	"smarthouse-service/restapi"
 	"time"
 )
 

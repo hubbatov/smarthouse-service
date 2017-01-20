@@ -1,7 +1,7 @@
 package main
 
 import (
-	"anybodyhere/utils"
+	"smarthouse-service/utils"
 )
 
 func main() {
