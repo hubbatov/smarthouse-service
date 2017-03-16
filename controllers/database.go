@@ -145,9 +145,9 @@ func (d *DatabaseManager) removeSensor(sensorID int) []error {
 	return d.dataBase.Where("id = ?", sensorID).Delete(&models.Sensor{}).GetErrors()
 }
 
-func (d *DatabaseManager) sensordata(sensorID int) []models.SensorData {
+func (d *DatabaseManager) sensordata(sensorID int, time string) []models.SensorData {
 	var table []models.SensorData
-	d.dataBase.Where("sensor_id = ?", sensorID).Order("time").Find(&table)
+	d.dataBase.Where("sensor_id = ? AND time > ?", sensorID, time).Order("time").Find(&table)
 	return table
 }
 

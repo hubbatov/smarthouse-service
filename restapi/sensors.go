@@ -7,6 +7,11 @@ type RESTSensor struct {
 	HouseID int    `json:"-"`
 }
 
+//RESTSensorDataFilter represents filter for sensor data
+type RESTSensorDataFilter struct {
+	After string `json:"after"`
+}
+
 //RESTSensorData RESTSensorData prepresents REST data for sensor measurings
 type RESTSensorData struct {
 	SensorID int    `json:"-"`

@@ -142,7 +142,14 @@ func GetSensorData(w http.ResponseWriter, req *http.Request) {
 
 		sensorID := GetIntVar("sensor_id", req)
 
-		json.NewEncoder(w).Encode(DBManager.sensordata(sensorID))
+		body, err := ioutil.ReadAll(req.Body)
+		errors.HandleError(errors.ConvertCustomError(err))
+
+		var sensordatafilter restapi.RESTSensorDataFilter
+		err = json.Unmarshal(body, &sensordatafilter)
+		errors.HandleError(errors.ConvertCustomError(err))
+
+		json.NewEncoder(w).Encode(DBManager.sensordata(sensorID, sensordatafilter.After))
 	} else {
 		w.WriteHeader(http.StatusUnauthorized)
 		fmt.Fprintf(w, "%s", "Please, login or register")
