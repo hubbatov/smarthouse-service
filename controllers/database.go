@@ -44,6 +44,7 @@ func CreateDb() {
 	db.AutoMigrate(&models.House{})
 	db.AutoMigrate(&models.Sensor{})
 	db.AutoMigrate(&models.SensorData{})
+	db.AutoMigrate(&models.Command{})
 
 	DBManager.dataBase = db
 }
@@ -143,6 +144,40 @@ func (d *DatabaseManager) editSensor(sensorID int, sensordata restapi.RESTSensor
 
 func (d *DatabaseManager) removeSensor(sensorID int) []error {
 	return d.dataBase.Where("id = ?", sensorID).Delete(&models.Sensor{}).GetErrors()
+}
+
+func (d *DatabaseManager) commands(houseID int) []models.Command {
+	var table []models.Command
+	d.dataBase.Where("house_id = ?", houseID).Order("id").Find(&table)
+	return table
+}
+
+func (d *DatabaseManager) addCommand(command restapi.RESTCommand) []error {
+	h := models.CreateCommand(command)
+	return d.dataBase.Create(&h).GetErrors()
+}
+
+func (d *DatabaseManager) editCommand(commandID int, command restapi.RESTCommand) []error {
+	errors := d.dataBase.Model(&models.Command{}).Where("id = ?", commandID).Update("name", command.Name).GetErrors()
+	if len(errors) > 0 {
+		return errors
+	}
+
+	errors = d.dataBase.Model(&models.Command{}).Where("id = ?", commandID).Update("query", command.Query).GetErrors()
+	if len(errors) > 0 {
+		return errors
+	}
+
+	errors = d.dataBase.Model(&models.Command{}).Where("id = ?", commandID).Update("command_type", command.CommandType).GetErrors()
+	if len(errors) > 0 {
+		return errors
+	}
+
+	return d.dataBase.Model(&models.Command{}).Where("id = ?", commandID).Update("available_values", command.AvailableValues).GetErrors()
+}
+
+func (d *DatabaseManager) removeCommand(commandID int) []error {
+	return d.dataBase.Where("id = ?", commandID).Delete(&models.Command{}).GetErrors()
 }
 
 func (d *DatabaseManager) sensordata(sensorID int, time string) []models.SensorData {

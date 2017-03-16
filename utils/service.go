@@ -37,6 +37,11 @@ func (s *Service) Run() {
 	router.HandleFunc("/users/{user_id}/houses/{house_id}/sensors/{sensor_id}", controllers.EditSensor).Methods("PUT")
 	router.HandleFunc("/users/{user_id}/houses/{house_id}/sensors/{sensor_id}", controllers.RemoveSensor).Methods("DELETE")
 
+	router.HandleFunc("/users/{user_id}/houses/{house_id}/commands", controllers.GetCommands).Methods("GET")
+	router.HandleFunc("/users/{user_id}/houses/{house_id}/commands", controllers.AddCommand).Methods("POST")
+	router.HandleFunc("/users/{user_id}/houses/{house_id}/commands/{command_id}", controllers.EditCommand).Methods("PUT")
+	router.HandleFunc("/users/{user_id}/houses/{house_id}/commands/{command_id}", controllers.RemoveCommand).Methods("DELETE")
+
 	router.HandleFunc("/users/{user_id}/houses/{house_id}/sensors/{sensor_id}/sensordata", controllers.GetSensorData).Methods("PUT")
 	router.HandleFunc("/users/{user_id}/houses/{house_id}/sensors/{sensor_id}/sensordata", controllers.AddSensorData).Methods("POST")
 	router.HandleFunc("/sensordata/{sensor_tag}", controllers.AddSensorDataByTag).Methods("POST")
