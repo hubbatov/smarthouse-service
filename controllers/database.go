@@ -94,13 +94,51 @@ func (d *DatabaseManager) sensors(houseID int) []models.Sensor {
 	return table
 }
 
+func (d *DatabaseManager) sensorID(sensorTag string) int {
+	var sensor models.Sensor
+
+	errors := d.dataBase.Where("tag = ?", sensorTag).First(&sensor).GetErrors()
+	if len(errors) > 0 {
+		return -1
+	}
+
+	return sensor.ID
+}
+
+func (d *DatabaseManager) userID(sensorID int) int {
+	var sensor models.Sensor
+	errors := d.dataBase.Where("id = ?", sensorID).First(&sensor).GetErrors()
+	if len(errors) > 0 {
+		return -1
+	}
+
+	var house models.House
+	errors = d.dataBase.Where("id = ?", sensor.HouseID).First(&house).GetErrors()
+	if len(errors) > 0 {
+		return -1
+	}
+
+	var user models.User
+	errors = d.dataBase.Where("id = ?", house.UserID).First(&user).GetErrors()
+	if len(errors) > 0 {
+		return -1
+	}
+
+	return user.ID
+}
+
 func (d *DatabaseManager) addSensor(sensordata restapi.RESTSensor) []error {
 	h := models.CreateSensor(sensordata)
 	return d.dataBase.Create(&h).GetErrors()
 }
 
 func (d *DatabaseManager) editSensor(sensorID int, sensordata restapi.RESTSensor) []error {
-	return d.dataBase.Model(&models.Sensor{}).Where("id = ?", sensorID).Update("name", sensordata.Name).GetErrors()
+	errors := d.dataBase.Model(&models.Sensor{}).Where("id = ?", sensorID).Update("name", sensordata.Name).GetErrors()
+	if len(errors) > 0 {
+		return errors
+	}
+
+	return d.dataBase.Model(&models.Sensor{}).Where("id = ?", sensorID).Update("tag", sensordata.Tag).GetErrors()
 }
 
 func (d *DatabaseManager) removeSensor(sensorID int) []error {

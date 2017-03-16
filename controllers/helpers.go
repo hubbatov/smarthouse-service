@@ -16,3 +16,9 @@ func GetIntVar(id string, req *http.Request) int {
 	errors.HandleError(errors.ConvertCustomError(err))
 	return result
 }
+
+//GetStringVar returns int variable by id
+func GetStringVar(id string, req *http.Request) string {
+	vars := mux.Vars(req)
+	return vars[id]
+}

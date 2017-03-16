@@ -186,3 +186,47 @@ func AddSensorData(w http.ResponseWriter, req *http.Request) {
 		fmt.Fprintf(w, "%s", "Please, login or register")
 	}
 }
+
+//AddSensorDataByTag adds sensor data using sensor tag
+func AddSensorDataByTag(w http.ResponseWriter, req *http.Request) {
+	contentType := req.Header.Get("Content-Type")
+	if !strings.Contains(contentType, "application/json") {
+		errors.HandleError(errors.GenerateCustomError("Content-Type is not application/json"))
+	}
+
+	accessToken := req.Header.Get("Authorization")
+	fl, userID := CheckAuthorization(accessToken)
+
+	if fl {
+
+		body, err := ioutil.ReadAll(req.Body)
+		errors.HandleError(errors.ConvertCustomError(err))
+
+		var sensordata restapi.RESTSensorData
+		err = json.Unmarshal(body, &sensordata)
+		errors.HandleError(errors.ConvertCustomError(err))
+
+		sensorTag := GetStringVar("sensor_tag", req)
+
+		sensorID := DBManager.sensorID(sensorTag)
+		sensordata.SensorID = sensorID
+
+		if DBManager.userID(sensorID) == userID {
+			eArray := DBManager.addSensorData(sensordata)
+
+			if len(eArray) > 0 {
+				w.WriteHeader(http.StatusBadRequest)
+				fmt.Fprintf(w, "%s", eArray)
+			} else {
+				w.WriteHeader(http.StatusOK)
+				fmt.Fprintf(w, "%s %d", "Added sensor data to sensor", sensorID)
+			}
+		} else {
+			w.WriteHeader(http.StatusBadRequest)
+			fmt.Fprintf(w, "%s", "This sensor is not yours")
+		}
+	} else {
+		w.WriteHeader(http.StatusUnauthorized)
+		fmt.Fprintf(w, "%s", "Please, login or register")
+	}
+}

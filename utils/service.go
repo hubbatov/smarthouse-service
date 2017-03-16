@@ -39,6 +39,7 @@ func (s *Service) Run() {
 
 	router.HandleFunc("/users/{user_id}/houses/{house_id}/sensors/{sensor_id}/sensordata", controllers.GetSensorData).Methods("GET")
 	router.HandleFunc("/users/{user_id}/houses/{house_id}/sensors/{sensor_id}/sensordata", controllers.AddSensorData).Methods("POST")
+	router.HandleFunc("/sensordata/{sensor_tag}", controllers.AddSensorDataByTag).Methods("POST")
 
 	http.ListenAndServe(":12345", router)
 }
