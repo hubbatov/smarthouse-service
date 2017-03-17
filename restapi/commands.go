@@ -6,7 +6,7 @@ type RESTCommand struct {
 	Name            string `gorm:"type:varchar(100)" json:"name"`
 	Query           string `gorm:"type:varchar(100)" json:"query"`
 	CommandType     string `gorm:"type:varchar(10)" json:"command_type"`
-	AvailableValues string `gorm:"type:varchar(100)" json:"available_values"`
+	AvailableValues string `gorm:"type:varchar(1000)" json:"available_values"`
 }
 
 //RESTCommandToDo represents REST data for control commands to do
