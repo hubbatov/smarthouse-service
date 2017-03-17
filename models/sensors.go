@@ -16,6 +16,7 @@ func CreateSensor(sensordata restapi.RESTSensor) Sensor {
 	a := Sensor{}
 	a.HouseID = sensordata.HouseID
 	a.Name = sensordata.Name
+	a.Tag = sensordata.Tag
 	return a
 }
 
