@@ -9,7 +9,8 @@ type RESTSensor struct {
 
 //RESTSensorDataFilter represents filter for sensor data
 type RESTSensorDataFilter struct {
-	After string `json:"after"`
+	After  string `json:"after"`
+	Before string `json:"before"`
 }
 
 //RESTSensorData RESTSensorData prepresents REST data for sensor measurings

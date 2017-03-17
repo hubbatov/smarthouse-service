@@ -149,7 +149,7 @@ func GetSensorData(w http.ResponseWriter, req *http.Request) {
 		err = json.Unmarshal(body, &sensordatafilter)
 		errors.HandleError(errors.ConvertCustomError(err))
 
-		json.NewEncoder(w).Encode(DBManager.sensordata(sensorID, sensordatafilter.After))
+		json.NewEncoder(w).Encode(DBManager.sensordata(sensorID, sensordatafilter.After, sensordatafilter.Before))
 	} else {
 		w.WriteHeader(http.StatusUnauthorized)
 		fmt.Fprintf(w, "%s", "Please, login or register")

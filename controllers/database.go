@@ -202,9 +202,19 @@ func (d *DatabaseManager) removeCommand(commandID int) []error {
 	return d.dataBase.Where("id = ?", commandID).Delete(&models.Command{}).GetErrors()
 }
 
-func (d *DatabaseManager) sensordata(sensorID int, time string) []models.SensorData {
+func (d *DatabaseManager) sensordata(sensorID int, after string, before string) []models.SensorData {
 	var table []models.SensorData
-	d.dataBase.Where("sensor_id = ? AND time > ?", sensorID, time).Order("time").Find(&table)
+
+	if len(after) != 0 && len(before) != 0 {
+		d.dataBase.Where("sensor_id = ? AND time > ? AND time <= ?", sensorID, after, before).Order("time").Find(&table)
+	} else if len(after) == 0 {
+		d.dataBase.Where("sensor_id = ? AND time <= ?", sensorID, before).Order("time").Find(&table)
+	} else if len(before) == 0 {
+		d.dataBase.Where("sensor_id = ? AND time > ?", sensorID, after).Order("time").Find(&table)
+	} else {
+		d.dataBase.Where("sensor_id = ?", sensorID).Order("time").Find(&table)
+	}
+
 	return table
 }
 
