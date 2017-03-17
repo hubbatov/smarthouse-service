@@ -105,8 +105,41 @@
 
 ### Команды управления
 
-Еще не реализовано
+Формат объекта в `JSON`:
 
-### Команды запроса
+    {
+		"name": "Свет",
+		"query": "192.168.1.101/gpio2",
+		"command_type": "POST",
+		"available_values": "[
+				{"name": "Включить", "suffix": "/on"},
+				{"name": "Выключить", "suffix": "/off"}
+			]"
+    }
 
-Еще не реализовано
+Допустимые значения поля `command_type`: 
+
+* `POST` - отправляет `POST` запрос 
+* `GET` - отправляет `GET` запрос
+
+Запросы:
+
+* `GET host:port/users/{user_id}/houses/{house_id}/commands` - возвращает список команд дома
+* `POST host:port/users/{user_id}/houses/{house_id}/commands` - добавляет команду в дом
+* `PUT host:port/users/{user_id}/houses/{house_id}/commands/{command_id}` - редактирует команду дома
+* `DELETE host:port/users/{user_id}/houses/{house_id}/commands/{command_id}` - удаляет команду из дома
+
+### Выполнение команды от имени сервера
+
+Формат объекта `JSON`:
+
+	{
+		"id": 3,
+		"query": "192.168.1.101/gpio2",
+		"suffix": "/on"
+		"type": "POST"
+	}
+
+При отправлении такого объекта будет проверено существование такой команды у текущего пользователя.
+
+* `POST host:port/commands/do` - выполняет команду от имени сервера

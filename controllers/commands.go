@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"bytes"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
@@ -123,6 +124,59 @@ func RemoveCommand(w http.ResponseWriter, req *http.Request) {
 		} else {
 			w.WriteHeader(http.StatusOK)
 			fmt.Fprintf(w, "%s %d", "Removed command", commandID)
+		}
+
+	} else {
+		w.WriteHeader(http.StatusUnauthorized)
+		fmt.Fprintf(w, "%s", "Please, login or register")
+	}
+}
+
+//RunCommand executes command from server
+func RunCommand(w http.ResponseWriter, req *http.Request) {
+	accessToken := req.Header.Get("Authorization")
+	fl, userID := CheckAuthorization(accessToken)
+
+	if fl {
+		body, err := ioutil.ReadAll(req.Body)
+		errors.HandleError(errors.ConvertCustomError(err))
+
+		var commandToDo restapi.RESTCommandToDo
+		err = json.Unmarshal(body, &commandToDo)
+		errors.HandleError(errors.ConvertCustomError(err))
+
+		if DBManager.userIDFromCommand(commandToDo.ID) == userID {
+
+			if commandToDo.Type == "POST" {
+
+				resp, httperr := http.Post(commandToDo.Query+commandToDo.Suffix, "application/json", bytes.NewBuffer(commandToDo.Body))
+				errors.HandleError(errors.ConvertCustomError(httperr))
+				defer resp.Body.Close()
+				body, httperr := ioutil.ReadAll(resp.Body)
+				errors.HandleError(errors.ConvertCustomError(httperr))
+
+				w.WriteHeader(http.StatusOK)
+				fmt.Fprintf(w, "%s", body)
+
+			} else if commandToDo.Type == "GET" {
+
+				resp, httperr := http.Get(commandToDo.Query + commandToDo.Suffix)
+				errors.HandleError(errors.ConvertCustomError(httperr))
+				defer resp.Body.Close()
+				body, httperr := ioutil.ReadAll(resp.Body)
+				errors.HandleError(errors.ConvertCustomError(httperr))
+
+				w.WriteHeader(http.StatusOK)
+				fmt.Fprintf(w, "%s", body)
+
+			} else {
+				w.WriteHeader(http.StatusBadRequest)
+				fmt.Fprintf(w, "%s", "Error in type of command")
+			}
+
+		} else {
+			w.WriteHeader(http.StatusBadRequest)
+			fmt.Fprintf(w, "%s", "This command is not yours")
 		}
 
 	} else {

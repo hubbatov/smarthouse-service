@@ -218,7 +218,7 @@ func AddSensorDataByTag(w http.ResponseWriter, req *http.Request) {
 		sensorID := DBManager.sensorID(sensorTag)
 		sensordata.SensorID = sensorID
 
-		if DBManager.userID(sensorID) == userID {
+		if DBManager.userIDFromSensor(sensorID) == userID {
 			eArray := DBManager.addSensorData(sensordata)
 
 			if len(eArray) > 0 {

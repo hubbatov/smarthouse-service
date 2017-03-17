@@ -106,7 +106,7 @@ func (d *DatabaseManager) sensorID(sensorTag string) int {
 	return sensor.ID
 }
 
-func (d *DatabaseManager) userID(sensorID int) int {
+func (d *DatabaseManager) userIDFromSensor(sensorID int) int {
 	var sensor models.Sensor
 	errors := d.dataBase.Where("id = ?", sensorID).First(&sensor).GetErrors()
 	if len(errors) > 0 {
@@ -150,6 +150,28 @@ func (d *DatabaseManager) commands(houseID int) []models.Command {
 	var table []models.Command
 	d.dataBase.Where("house_id = ?", houseID).Order("id").Find(&table)
 	return table
+}
+
+func (d *DatabaseManager) userIDFromCommand(commandID int) int {
+	var command models.Command
+	errors := d.dataBase.Where("id = ?", commandID).First(&command).GetErrors()
+	if len(errors) > 0 {
+		return -1
+	}
+
+	var house models.House
+	errors = d.dataBase.Where("id = ?", command.HouseID).First(&house).GetErrors()
+	if len(errors) > 0 {
+		return -1
+	}
+
+	var user models.User
+	errors = d.dataBase.Where("id = ?", house.UserID).First(&user).GetErrors()
+	if len(errors) > 0 {
+		return -1
+	}
+
+	return user.ID
 }
 
 func (d *DatabaseManager) addCommand(command restapi.RESTCommand) []error {
